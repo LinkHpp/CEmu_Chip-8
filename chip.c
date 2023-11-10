@@ -38,6 +38,8 @@ void initializeEmu()
     I = 0;      // Reset index register
     sp = 0;     // Reset stack pointer
 
+    printf("All initilialized!\n");
+
     // Clear display
     // Clear stack
     // Clear registers V0-VF
@@ -55,7 +57,7 @@ void initializeEmu()
 void loadGame()
 {
 
-    FILE *file = fopen("Games/Tetris.ch8", "rb");
+    FILE *file = fopen("Games/IBM_Logo.ch8", "rb");
     if (file == NULL)
     {
         printf("error: Couldn't open %s\n", "pong");
@@ -78,7 +80,9 @@ void loadGame()
         memory[i + 512] = buffer[i];
     }
 
-    // printf("%x%x", memory[0 + 512], memory[1 + 512]);
+    printf("Loaded Game!\n");
+
+    printf("First opcode of the game is 0x%x%x\n", memory[0 + 512], memory[1 + 512]);
 }
 
 void emulateCycle()
@@ -93,52 +97,19 @@ void emulateCycle()
         // Some opcodes //
 
     case 0x2000: // 0x2NNN: Makes a jump to the subroutine
+        printf("Know opcode: 0x%X\n", opcode);
         stack[sp] = pc;
         ++sp;
         pc = opcode & 0x0FFF;
         break;
 
     case 0xA000: // ANNN: Sets I to the address NNN
-        // Execute opcode
+                 // Execute opcode
+        printf("Know opcode: 0x%X ", opcode);
+
         I = opcode & 0x0FFF;
         pc += 2;
-        // printf("%x", I);
-        break;
-
-    case 0x0004:
-        if (V[(opcode & 0x00F0) >> 4] > (0xFF - V[(opcode & 0x0F00) >> 8]))
-            V[0xF] = 1; // carry
-        else
-            V[0xF] = 0;
-        V[(opcode & 0x0F00) >> 8] += V[(opcode & 0x00F0) >> 4];
-        pc += 2;
-        break;
-
-    case 0x0033:
-        memory[I] = V[(opcode & 0x0F00) >> 8] / 100;
-        memory[I + 1] = (V[(opcode & 0x0F00) >> 8] / 10) % 10;
-        memory[I + 2] = (V[(opcode & 0x0F00) >> 8] % 100) % 10;
-        pc += 2;
-        break;
-
-    case 0x6000:
-        
-
-    case 0x0000:
-        switch (opcode & 0x000F)
-        {
-        case 0x0000: // 0x00E0: Clears the screen
-                     // Execute opcode
-            break;
-
-        case 0x000E: // 0x00EE: Returns from subroutine
-            
-            break;
-
-        default:
-            printf("Unknown opcode [0x0000]: 0x%X\n", opcode);
-            pc += 2;
-        }
+        printf("Index register = %x\n", I);
         break;
 
     default:

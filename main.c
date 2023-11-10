@@ -1,4 +1,4 @@
-#include "chip8.h"
+#include "chip.c"
 
 int main()
 {
@@ -6,7 +6,7 @@ int main()
     initializeEmu();
     loadGame();
 
-    for (;;)
+    for (int i = 0; i <= 20; i++)
     {
         emulateCycle();
     }
