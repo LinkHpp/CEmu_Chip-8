@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 /*This is the specs of the CPU*/
 
 unsigned short opcode;
@@ -95,9 +96,24 @@ void emulateCycle()
     {
         // Some opcodes //
 
+    case 0x0000:
+        switch (opcode & 0x000F)
+        {
+        case 0x0000:
+            printf("Clear Screen\n");
+            pc += 2;
+            break;
+
+        case 0x000E:
+            printf("Returning from subRoutine\n");
+            break;
+        }
+        break;
+
     case 0x1000:
         printf("Jump to memory: 0x%X\n", opcode & 0x0FFF);
         pc = opcode & 0x0FFF;
+        printf("%X\n", pc);
         break;
 
     case 0x2000: // 0x2NNN: Makes a jump to the subroutine
@@ -109,14 +125,14 @@ void emulateCycle()
 
     case 0x6000:
         V[(opcode & 0x0F00) >> 8] = opcode & 0x00FF;
-        printf("Valor V%X = %X\n", (opcode & 0x0F00),(opcode & 0x00FF));
+        printf("Valor V%X = %X\n", (opcode & 0x0F00), (opcode & 0x00FF));
         pc += 2;
         break;
-    
+
     case 0x7000:
         V[(opcode & 0x0F00) >> 8] += opcode & 0x00FF;
         printf("Valor V%X = %X\n", (opcode & 0x0F00), (opcode & 0x00FF));
-        pc +=2;
+        pc += 2;
         break;
 
     case 0xA000: // ANNN: Sets I to the address NNN
@@ -127,18 +143,6 @@ void emulateCycle()
         pc += 2;
         printf("Index register = %x\n", I);
         break;
-    
-    case 0x0000:
-        switch (opcode & 0x000F)
-        {
-        case 0x0000:
-            printf("Clear Screen\n");
-            pc += 2;
-            break;
-        }
-        case 0x000E:
-            printf("Returning from subRoutine\n");
-            break;
 
     default:
         printf("Unknown opcode: 0x%X\n", opcode);
