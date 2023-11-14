@@ -56,7 +56,7 @@ void initializeEmu()
 void loadGame()
 {
 
-    FILE *file = fopen("Games/IBM_Logo.ch8", "rb");
+    FILE *file = fopen("Games/1-chip8-logo.ch8", "rb");
     if (file == NULL)
     {
         printf("error: Couldn't open %s\n", "pong");
@@ -109,8 +109,14 @@ void emulateCycle()
 
     case 0x6000:
         V[(opcode & 0x0F00) >> 8] = opcode & 0x00FF;
-        printf("Valor V%X= %X\n", (opcode & 0x0F00),(opcode & 0x00FF));
+        printf("Valor V%X = %X\n", (opcode & 0x0F00),(opcode & 0x00FF));
         pc += 2;
+        break;
+    
+    case 0x7000:
+        V[(opcode & 0x0F00) >> 8] += opcode & 0x00FF;
+        printf("Valor V%X = %X\n", (opcode & 0x0F00), (opcode & 0x00FF));
+        pc +=2;
         break;
 
     case 0xA000: // ANNN: Sets I to the address NNN
@@ -121,7 +127,7 @@ void emulateCycle()
         pc += 2;
         printf("Index register = %x\n", I);
         break;
-
+    
     case 0x0000:
         switch (opcode & 0x000F)
         {
@@ -129,11 +135,10 @@ void emulateCycle()
             printf("Clear Screen\n");
             pc += 2;
             break;
-        default:
-        printf("Unknown opcode of 0x0000: 0x%X\n", opcode);
-        pc += 2;
-            break;
         }
+        case 0x000E:
+            printf("Returning from subRoutine\n");
+            break;
 
     default:
         printf("Unknown opcode: 0x%X\n", opcode);
