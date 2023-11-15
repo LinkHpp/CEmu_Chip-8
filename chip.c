@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 /*This is the specs of the CPU*/
 
 unsigned short opcode;
